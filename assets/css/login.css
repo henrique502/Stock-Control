@@ -1,0 +1,8 @@
+.main-container { width: 300px; margin: 0px auto 0px auto; position: relative; display: block; }
+.logo { display: block; text-align: center; height: 60px; margin-top: 50px; }
+.panel, .alert { margin-top: 25px; }
+.developer { text-align: center; display: block; }
+
+/* Login */
+
+
