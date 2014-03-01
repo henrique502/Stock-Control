@@ -3,11 +3,13 @@
 class HR_System extends CI_Session {
 	
 	private $ci = null;
-	private $status = false;
-	private $flags = array();
 	private $uri = null;
 	private $current_url = null;
 
+	private $status = false;
+	private $flags = array();
+	private $userId = 0;
+	
 	const FLAG_ROOT = 'root';
 	const LOGIN_URI = 'login';
 	const PASSWORD_URI = 'password';
@@ -45,12 +47,27 @@ class HR_System extends CI_Session {
 		return true;
 	}
 
-
+	public function login($account){
+		$this->set_userdata('usuario',array(
+			'id' => $account->id,
+			'nome' => $account->nome,
+			'flags' => $account->permissoes,
+			'status' => 1
+		));
+	}
+	
+	public function getUserId(){
+		return $this->userId;
+	}
+	
 	private function alloc_session(){
 		$data = $this->userdata('usuario');
-		if($data === false)
+		if($data == false)
 			return false;
-
+		
+		if(!isset($data['id']))
+			return false;
+		
 		if(!isset($data['flags']))
 			return false;
 
@@ -65,6 +82,7 @@ class HR_System extends CI_Session {
 		if($status !== 1)
 			return false;
 
+		$this->userId = $data['id'];
 		$this->flags = $flags;
 		$this->status = true;
 

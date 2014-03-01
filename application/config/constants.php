@@ -16,4 +16,8 @@ define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
 /* Regexp */
 define('EMAIL_FORMAT',"/^([0-9a-zA-Z]+([_.-]?[0-9a-zA-Z]+)*@[0-9a-zA-Z]+[0-9,a-z,A-Z,.,-]*(.){1}[a-zA-Z]{2,4})+$/");
-define('PASSWORD_FORMAT',"/^(([a-zA-Z0-9][@!#]);{6,16})$/");
+
+/* Sustem exp */
+define('SYSTEM_PASSWORD_FORMAT',"/^(([a-zA-Z0-9\@\!\#]){6,16})$/");
+define('SYSTEM_USERNAME_FORMAT',"/^(([a-z]){3,30})$/");
+define('SYSTEM_PASSWORD_CODE_FORMAT',"/^([a-zA-Z0-9]{40})$/");

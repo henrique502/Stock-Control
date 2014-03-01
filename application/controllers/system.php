@@ -7,8 +7,34 @@ class System extends CI_Controller {
 		$this->load->model('system_model','model');
 
 		if(is_post()){
-
+			$data = array(
+				'username' => strtolower(trim($this->input->post('user'))),
+				'password' => $this->input->post('password'),
+			);
+	
+			if(preg_match(SYSTEM_USERNAME_FORMAT, $data['username']) && preg_match(SYSTEM_PASSWORD_FORMAT, $data['password'])){
+				$account = $this->model->getAccountByLogin($data);
+				if($account){
+					if($account->forceNewPassword == 1){
+						$code = $this->geratePasswordCode($account->id);
+						redirect("password/edit?code=" . $code);
+					}
+					
+					$this->system->login($account);
+					
+					$go = $this->input->get('go');
+					if(!empty($go))
+						redirect($go);
+					
+					redirect(site_url());
+				} else {
+					$this->alert->add('Usuário e/ou senha inválidos.',4);
+				}
+			} else {
+				$this->alert->add('Usuário e/ou senha inválidos 1.',4);
+			}
 		}
+
 		$this->load->view('system/auth/login');
 	}
 
@@ -18,14 +44,10 @@ class System extends CI_Controller {
 		if(is_post()){
 			$email = strtolower($this->input->post('email'));
 			if(preg_match(EMAIL_FORMAT, $email)){
-				$this->load->helper('string');
-
-				$expire = strtotime('+24 hours');
-				$code = random_string('alnum', 40);
 
 				$account = $this->model->getAccountByEmail($email);
 				if($account){
-					$this->model->setNewPasswordCode($account->id,$code,$expire);
+					$code = $this->geratePasswordCode($account->id);
 
 					$this->load->library('email',array('mailtype' => 'html'));
 					$this->email->from($this->config->item('cliente_email'), $this->config->item('cliente'));
@@ -58,17 +80,25 @@ class System extends CI_Controller {
 		$this->load->model('system_model','model');
 		$time = time();
 		$code = $this->input->get('code');
-		if(preg_match("/^([a-zA-Z0-9]{40})$/",$code)){
+		if(preg_match(SYSTEM_PASSWORD_CODE_FORMAT,$code)){
 			$account = $this->model->getAccountByResetPasswordCode($code);
 			if($account){
 				$time_left = $account->time - $time;
 				if($time_left >= 0){
 					if(is_post()){
-
-
-
-
-
+						$new_password = $this->input->post('password');
+						if(preg_match(SYSTEM_PASSWORD_FORMAT, $new_password)){
+							$repeat_password = $this->input->post('repeat');
+							if($new_password === $repeat_password){
+								$this->model->updatePassowrd($account->id,$new_password);
+								$this->alert->add('Senha alterada com sucesso!',1);
+								redirect("login");
+							} else {
+								$this->alert->add('As senhas nâo são iguais.',3);
+							}
+						} else {
+							$this->alert->add('Senha deve ter 6 a 16 caracteres e estar no seguinte formato: a-z, A-Z, 0-9, @, ! e/ou #',3);
+						}
 					}
 					$this->load->view('system/auth/passwordEdit',array(
 						'account' => $account
@@ -81,20 +111,48 @@ class System extends CI_Controller {
 		} else { show_404(); }
 	}
 
+	/* Logoff :: /logoff */
 	public function logoff(){
-
+		$this->system->logoff();
+		
+		redirect("login");
+	}
 	
-		$this->load->view('system/auth/login');
+	private function geratePasswordCode($id){
+		$this->load->helper('string');
+		
+		$expire = strtotime('+24 hours');
+		$code = random_string('alnum', 40);
+		
+		$this->model->setNewPasswordCode($id,$code,$expire);
+		
+		return $code;
 	}
 	
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	/* Default */
 
 	public function dashboard(){
-		$this->auth->verify();
-		$this->load->view('sistema/home');
+		
+		$this->load->view('system/home');
 	}
+	
 	public function notfound(){
 		show_404();
 	}

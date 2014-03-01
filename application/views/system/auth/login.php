@@ -34,12 +34,12 @@
 			<form action="" method="post" id="login-form" role="form">
 				<div class="form-group has-feedback">
 					<label for="inputUsuario">Usuário</label>
-					<input type="text" class="form-control" id="inputUsuario" placeholder="Digite seu usuário:" name="user" maxlength="30">
+					<input type="text" class="form-control lowercase" id="inputUsuario" name="user" maxlength="30">
 					<span class="glyphicon glyphicon-user form-control-feedback"></span>
 				</div>
 				<div class="form-group has-feedback">
 					<label for="inputPassword">Senha</label>
-					<input type="password" class="form-control" id="inputPassword" placeholder="Digite sua senha:" name="password" maxlength="16">
+					<input type="password" class="form-control" id="inputPassword" name="password" maxlength="16">
 					<span class="glyphicon glyphicon-lock form-control-feedback"></span>
 				</div>
 				<div class="form-group">

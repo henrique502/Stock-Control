@@ -3,6 +3,8 @@
 .panel, .alert { margin-top: 25px; }
 .developer { text-align: center; display: block; }
 
+.lowercase { text-transform: lowercase; }
+
 /* Login */
 
 

@@ -39,6 +39,10 @@ function curl_get($url,$param=array()){
 	return $return;
 }
 
+function system_password($string){
+	return sha1($string);
+}
+
 function pagination(&$ci,$array = array()){
 	$ci->pagination->initialize(array_merge(array(
 		'uri_segment' => 3,
